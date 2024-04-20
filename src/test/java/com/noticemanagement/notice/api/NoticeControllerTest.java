@@ -41,6 +41,12 @@ class NoticeControllerTest {
 	@Autowired
 	NoticeSetUp noticeSetUp;
 
+	@AfterEach
+	void cleanUp() {
+		new File("src/test/resources/static/1.txt").delete();
+		new File("src/test/resources/static/2.txt").delete();
+	}
+
 	@Nested
 	class CreateNotice {
 
@@ -57,11 +63,6 @@ class NoticeControllerTest {
 			);
 			json = new MockMultipartFile("request", "", "application/json",
 				objectMapper.writeValueAsString(noticeCreateRequest).getBytes());
-		}
-
-		@AfterEach
-		void cleanUp() {
-			new File("1.txt").delete();
 		}
 
 		@Test
@@ -114,12 +115,6 @@ class NoticeControllerTest {
 			NoticeModifyRequest request = new NoticeModifyRequest("제목2", "내용2");
 			json = new MockMultipartFile("request", "", "application/json",
 				objectMapper.writeValueAsString(request).getBytes());
-		}
-
-		@AfterEach
-		void cleanUp() {
-			new File("1.txt").delete();
-			new File("2.txt").delete();
 		}
 
 		@Test

@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +40,11 @@ class NoticeServiceTest {
 
 	@Mock
 	FileRepository fileRepository;
+
+	@BeforeEach
+	void setUp() {
+		ReflectionTestUtils.setField(noticeService, "uploadDir", "src/test/resources/static/");
+	}
 
 	@Nested
 	class CreateNotice {

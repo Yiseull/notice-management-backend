@@ -1,10 +1,13 @@
 package com.noticemanagement.notice.application;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +27,9 @@ public class NoticeService {
 
 	private final NoticeRepository noticeRepository;
 	private final FileRepository fileRepository;
+
+	@Value("${file.upload-dir}")
+	private String uploadDir;
 
 	@Transactional
 	public Long createNotice(final Notice notice, final List<MultipartFile> multipartFiles) {
@@ -74,7 +80,9 @@ public class NoticeService {
 			final MultipartFile multipartFile = multipartFiles.get(i);
 			final File savedFile = files.get(i);
 			try {
-				multipartFile.transferTo(Paths.get(savedFile.getFileName()));
+				Path targetLocation = Paths.get(uploadDir, savedFile.getFileName());
+				Files.createDirectories(targetLocation.getParent());
+				multipartFile.transferTo(targetLocation);
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new RuntimeException("파일 저장에 실패했습니다.", e);
