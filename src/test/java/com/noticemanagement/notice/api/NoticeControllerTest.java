@@ -145,7 +145,7 @@ class NoticeControllerTest {
 	}
 
 	@Test
-	void deleteNotice() throws Exception {
+	void 공지사항을_삭제한다() throws Exception {
 		// given
 		final Notice notice = Notice.builder()
 			.title("제목")
@@ -165,7 +165,7 @@ class NoticeControllerTest {
 	}
 
 	@Test
-	void getNotice() throws Exception {
+	void 공지사항을_조회한다() throws Exception {
 		// given
 		final Notice notice = Notice.builder()
 			.title("제목")
