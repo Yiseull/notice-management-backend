@@ -189,4 +189,43 @@ class NoticeControllerTest {
 			.andExpect(jsonPath("notice.writer").value("작성자"))
 			.andExpect(jsonPath("notice.views").value(1));
 	}
+
+	@Test
+	void 공지사항을_모두_조회한다() throws Exception {
+		// given
+		final Notice notice1 = Notice.builder()
+			.title("제목1")
+			.content("내용1")
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+			.writer("작성자1")
+			.build();
+		final Notice notice2 = Notice.builder()
+			.title("제목2")
+			.content("내용2")
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+			.writer("작성자2")
+			.build();
+		noticeSetUp.save(notice1);
+		noticeSetUp.save(notice2);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(get("/api/notices"));
+
+		// then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("notices[0].noticeId").value(1L))
+			.andExpect(jsonPath("notices[0].title").value("제목1"))
+			.andExpect(jsonPath("notices[0].content").value("내용1"))
+			.andExpect(jsonPath("notices[0].writer").value("작성자1"))
+			.andExpect(jsonPath("notices[0].views").value(0))
+			.andExpect(jsonPath("notices[1].noticeId").value(2L))
+			.andExpect(jsonPath("notices[1].title").value("제목2"))
+			.andExpect(jsonPath("notices[1].content").value("내용2"))
+			.andExpect(jsonPath("notices[1].writer").value("작성자2"))
+			.andExpect(jsonPath("notices[1].views").value(0));
+	}
 }

@@ -28,6 +28,7 @@ import com.noticemanagement.global.error.exception.EntityNotFoundException;
 import com.noticemanagement.global.error.exception.ErrorCode;
 import com.noticemanagement.notice.api.dto.response.NoticeInfo;
 import com.noticemanagement.notice.api.dto.response.NoticeResponse;
+import com.noticemanagement.notice.api.dto.response.NoticesResponse;
 import com.noticemanagement.notice.dao.FileRepository;
 import com.noticemanagement.notice.dao.NoticeRepository;
 import com.noticemanagement.notice.domain.File;
@@ -280,5 +281,35 @@ class NoticeServiceTest {
 				.isInstanceOf(EntityNotFoundException.class)
 				.hasMessage(ErrorCode.NOTICE_NOT_FOUND.getMessage());
 		}
+	}
+
+	@Test
+	void 공지사항을_모두_조회한다() {
+		// given
+		Notice notice1 = Notice.builder()
+			.title("title1")
+			.content("content1")
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+			.writer("writer1")
+			.build();
+		Notice notice2 = Notice.builder()
+			.title("title2")
+			.content("content2")
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+			.writer("writer2")
+			.build();
+		List<Notice> notices = Arrays.asList(notice1, notice2);
+
+		given(noticeRepository.findAll()).willReturn(notices);
+
+		// when
+		NoticesResponse result = noticeService.getNotices();
+
+		// then
+		assertThat(result.notices()).hasSize(2);
+		assertThat(result.notices().get(0)).usingRecursiveComparison().isEqualTo(NoticeInfo.from(notice1));
+		assertThat(result.notices().get(1)).usingRecursiveComparison().isEqualTo(NoticeInfo.from(notice2));
 	}
 }
