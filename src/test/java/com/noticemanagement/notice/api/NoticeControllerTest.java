@@ -148,4 +148,24 @@ class NoticeControllerTest {
 				.andExpect(status().isOk());
 		}
 	}
+
+	@Test
+	void deleteNotice() throws Exception {
+		// given
+		final Notice notice = Notice.builder()
+			.title("제목")
+			.content("내용")
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+			.writer("작성자")
+			.build();
+		noticeSetUp.save(notice);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(delete("/api/notices/1"));
+
+		// then
+		resultActions
+			.andExpect(status().isOk());
+	}
 }

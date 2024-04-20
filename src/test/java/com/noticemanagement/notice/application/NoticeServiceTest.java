@@ -182,4 +182,48 @@ class NoticeServiceTest {
 				.hasMessage(ErrorCode.NOTICE_NOT_FOUND.getMessage());
 		}
 	}
+
+	@Nested
+	class DeleteNotice {
+		@Test
+		void 공지사항을_삭제한다() {
+			// given
+			Notice notice = Notice.builder()
+				.title("title")
+				.content("content")
+				.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+				.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+				.writer("writer")
+				.build();
+
+			File file1 = new File();
+			File file2 = new File();
+			List<File> files = Arrays.asList(file1, file2);
+
+			given(noticeRepository.findById(anyLong())).willReturn(java.util.Optional.of(notice));
+			given(fileRepository.findAllByNoticeId(anyLong())).willReturn(files);
+			willDoNothing().given(noticeRepository).delete(notice);
+			willDoNothing().given(fileRepository).deleteAll(files);
+
+			// when
+			noticeService.deleteNotice(1L);
+
+			// then
+			then(noticeRepository).should().findById(1L);
+			then(fileRepository).should().findAllByNoticeId(1L);
+			then(noticeRepository).should().delete(notice);
+			then(fileRepository).should().deleteAll(files);
+		}
+
+		@Test
+		void 공지사항이_없는_경우_예외를_발생시킨다() {
+			// given
+			given(noticeRepository.findById(anyLong())).willReturn(Optional.empty());
+
+			// when, then
+			assertThatThrownBy(() -> noticeService.deleteNotice(1L))
+				.isInstanceOf(EntityNotFoundException.class)
+				.hasMessage(ErrorCode.NOTICE_NOT_FOUND.getMessage());
+		}
+	}
 }
