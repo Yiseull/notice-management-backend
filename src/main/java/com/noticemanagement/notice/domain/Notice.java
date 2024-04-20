@@ -59,4 +59,9 @@ public class Notice extends BaseEntity {
 		this.endTime = endTime;
 		this.writer = Objects.requireNonNull(writer);
 	}
+
+	public void modify(final String title, final String content) {
+		this.title = new Title(title);
+		this.content = content;
+	}
 }

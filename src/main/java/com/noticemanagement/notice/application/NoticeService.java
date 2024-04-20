@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.noticemanagement.global.error.exception.EntityNotFoundException;
+import com.noticemanagement.global.error.exception.ErrorCode;
 import com.noticemanagement.notice.dao.FileRepository;
 import com.noticemanagement.notice.dao.NoticeRepository;
 import com.noticemanagement.notice.domain.File;
@@ -33,6 +35,28 @@ public class NoticeService {
 		final List<File> savedFiles = fileRepository.saveAll(files);
 		renameFiles(multipartFiles, savedFiles);
 		return savedNotice.getId();
+	}
+
+	@Transactional
+	public void modifyNotice(
+		final Long noticeId,
+		final String title,
+		final String content,
+		final List<MultipartFile> multipartFiles
+	) {
+		final Notice foundNotice = noticeRepository.findById(noticeId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+		foundNotice.modify(title, content);
+
+		if (multipartFiles != null) {
+			final List<File> filesToDelete = fileRepository.findAllByNoticeId(noticeId);
+			filesToDelete.forEach(file -> new java.io.File(file.getId() + file.getExtension()).delete());
+			fileRepository.deleteAll(filesToDelete);
+
+			final List<File> files = File.of(multipartFiles, noticeId);
+			final List<File> savedFiles = fileRepository.saveAll(files);
+			renameFiles(multipartFiles, savedFiles);
+		}
 	}
 
 	private void renameFiles(final List<MultipartFile> multipartFiles, final List<File> files) {
