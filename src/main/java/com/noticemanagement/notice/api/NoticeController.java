@@ -17,6 +17,7 @@ import com.noticemanagement.notice.api.dto.request.NoticeCreateRequest;
 import com.noticemanagement.notice.api.dto.request.NoticeModifyRequest;
 import com.noticemanagement.notice.api.dto.response.NoticeCreateResponse;
 import com.noticemanagement.notice.api.dto.response.NoticeResponse;
+import com.noticemanagement.notice.api.dto.response.NoticesResponse;
 import com.noticemanagement.notice.application.NoticeService;
 
 import lombok.RequiredArgsConstructor;
@@ -56,5 +57,10 @@ public class NoticeController {
 	@GetMapping("/{noticeId}")
 	public ResponseEntity<NoticeResponse> getNotice(@PathVariable final Long noticeId) {
 		return ResponseEntity.ok(noticeService.getNotice(noticeId));
+	}
+
+	@GetMapping
+	public ResponseEntity<NoticesResponse> getNotices() {
+		return ResponseEntity.ok(noticeService.getNotices());
 	}
 }
