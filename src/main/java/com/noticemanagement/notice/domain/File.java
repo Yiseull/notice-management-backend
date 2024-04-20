@@ -26,11 +26,15 @@ public class File {
 	@Column(name = "notice_id", nullable = false)
 	private Long noticeId;
 
+	@Column(name = "original_name", nullable = false)
+	private String originalName;
+
 	@Column(name = "extension", nullable = false)
 	private String extension;
 
-	public File(final Long noticeId, final String extension) {
+	public File(final Long noticeId, final String originalName, final String extension) {
 		this.noticeId = noticeId;
+		this.originalName = originalName;
 		this.extension = extension;
 	}
 
@@ -39,8 +43,12 @@ public class File {
 			.map(file -> {
 				final String originalFilename = file.getOriginalFilename();
 				final String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-				return new File(noticeId, extension);
+				return new File(noticeId, originalFilename, extension);
 			})
 			.toList();
+	}
+
+	public String getFileName() {
+		return getId() + getExtension();
 	}
 }

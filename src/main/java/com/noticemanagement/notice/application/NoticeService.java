@@ -50,7 +50,7 @@ public class NoticeService {
 
 		if (multipartFiles != null) {
 			final List<File> filesToDelete = fileRepository.findAllByNoticeId(noticeId);
-			filesToDelete.forEach(file -> new java.io.File(file.getId() + file.getExtension()).delete());
+			filesToDelete.forEach(file -> new java.io.File(file.getFileName()).delete());
 			fileRepository.deleteAll(filesToDelete);
 
 			final List<File> files = File.of(multipartFiles, noticeId);
@@ -64,7 +64,7 @@ public class NoticeService {
 		final Notice notice = noticeRepository.findById(noticeId)
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOTICE_NOT_FOUND));
 		final List<File> files = fileRepository.findAllByNoticeId(noticeId);
-		files.forEach(file -> new java.io.File(file.getId() + file.getExtension()).delete());
+		files.forEach(file -> new java.io.File(file.getFileName()).delete());
 		noticeRepository.delete(notice);
 		fileRepository.deleteAll(files);
 	}
@@ -74,9 +74,7 @@ public class NoticeService {
 			final MultipartFile multipartFile = multipartFiles.get(i);
 			final File savedFile = files.get(i);
 			try {
-				final String originalFilename = multipartFile.getOriginalFilename();
-				final String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-				multipartFile.transferTo(Paths.get(savedFile.getId() + extension));
+				multipartFile.transferTo(Paths.get(savedFile.getFileName()));
 			} catch (IOException e) {
 				e.printStackTrace();
 				throw new RuntimeException("파일 저장에 실패했습니다.", e);

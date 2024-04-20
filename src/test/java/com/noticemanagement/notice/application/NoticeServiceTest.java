@@ -80,15 +80,15 @@ class NoticeServiceTest {
 			MultipartFile multipartFile2 = Mockito.mock(MultipartFile.class);
 			List<MultipartFile> multipartFiles = Arrays.asList(multipartFile1, multipartFile2);
 
-			File file1 = new File();
-			File file2 = new File();
+			File file1 = new File(1L, "file1", ".png");
+			File file2 = new File(1L, "file2", ".png");
 			List<File> files = Arrays.asList(file1, file2);
 
 			given(noticeRepository.save(any(Notice.class))).willReturn(notice);
 			given(fileRepository.saveAll(any())).willReturn(files);
 
-			given(multipartFile1.getOriginalFilename()).willReturn("file1.png");
-			given(multipartFile2.getOriginalFilename()).willReturn("file2.png");
+			given(multipartFile1.getOriginalFilename()).willReturn(file1.getFileName());
+			given(multipartFile2.getOriginalFilename()).willReturn(file1.getFileName());
 			willDoNothing().given(multipartFile1).transferTo(any(java.nio.file.Path.class));
 			willDoNothing().given(multipartFile2).transferTo(any(java.nio.file.Path.class));
 
@@ -143,8 +143,8 @@ class NoticeServiceTest {
 			MultipartFile multipartFile2 = Mockito.mock(MultipartFile.class);
 			List<MultipartFile> newMultipartFiles = Arrays.asList(multipartFile1, multipartFile2);
 
-			File file1 = new File();
-			File file2 = new File();
+			File file1 = new File(1L, "file1", ".png");
+			File file2 = new File(1L, "file2", ".png");
 			List<File> files = Arrays.asList(file1, file2);
 
 			given(noticeRepository.findById(anyLong())).willReturn(java.util.Optional.of(notice));
@@ -152,8 +152,8 @@ class NoticeServiceTest {
 			willDoNothing().given(fileRepository).deleteAll(files);
 			given(fileRepository.saveAll(any())).willReturn(files);
 
-			given(multipartFile1.getOriginalFilename()).willReturn("file1.png");
-			given(multipartFile2.getOriginalFilename()).willReturn("file2.png");
+			given(multipartFile1.getOriginalFilename()).willReturn(file1.getFileName());
+			given(multipartFile2.getOriginalFilename()).willReturn(file1.getFileName());
 			willDoNothing().given(multipartFile1).transferTo(any(java.nio.file.Path.class));
 			willDoNothing().given(multipartFile2).transferTo(any(java.nio.file.Path.class));
 
