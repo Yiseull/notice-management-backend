@@ -1,0 +1,20 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        dialect: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/test;MODE=MySQL
+    username: sa
+    password:
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
