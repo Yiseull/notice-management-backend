@@ -59,6 +59,16 @@ public class NoticeService {
 		}
 	}
 
+	@Transactional
+	public void deleteNotice(final Long noticeId) {
+		final Notice notice = noticeRepository.findById(noticeId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+		final List<File> files = fileRepository.findAllByNoticeId(noticeId);
+		files.forEach(file -> new java.io.File(file.getId() + file.getExtension()).delete());
+		noticeRepository.delete(notice);
+		fileRepository.deleteAll(files);
+	}
+
 	private void renameFiles(final List<MultipartFile> multipartFiles, final List<File> files) {
 		IntStream.range(0, multipartFiles.size()).forEach(i -> {
 			final MultipartFile multipartFile = multipartFiles.get(i);

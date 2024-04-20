@@ -3,6 +3,7 @@ package com.noticemanagement.notice.api;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -41,6 +42,12 @@ public class NoticeController {
 		@RequestPart(required = false) final List<MultipartFile> files
 	) {
 		noticeService.modifyNotice(noticeId, request.title(), request.content(), files);
+		return ResponseEntity.ok().build();
+	}
+
+	@DeleteMapping("/{noticeId}")
+	public ResponseEntity<Void> deleteNotice(@PathVariable final Long noticeId) {
+		noticeService.deleteNotice(noticeId);
 		return ResponseEntity.ok().build();
 	}
 }
