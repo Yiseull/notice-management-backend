@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "files")
 public class File {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 

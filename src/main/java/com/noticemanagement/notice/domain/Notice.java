@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "notices")
 public class Notice extends BaseEntity {
 	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")
 	private Long id;
 
