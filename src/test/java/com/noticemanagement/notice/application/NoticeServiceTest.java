@@ -1,7 +1,9 @@
 package com.noticemanagement.notice.application;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.BDDMockito.any;
+import static org.mockito.BDDMockito.anyList;
 import static org.mockito.BDDMockito.*;
 
 import java.io.IOException;
@@ -24,6 +26,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.noticemanagement.global.error.exception.EntityNotFoundException;
 import com.noticemanagement.global.error.exception.ErrorCode;
+import com.noticemanagement.notice.api.dto.response.NoticeInfo;
+import com.noticemanagement.notice.api.dto.response.NoticeResponse;
 import com.noticemanagement.notice.dao.FileRepository;
 import com.noticemanagement.notice.dao.NoticeRepository;
 import com.noticemanagement.notice.domain.File;
@@ -228,6 +232,51 @@ class NoticeServiceTest {
 
 			// when, then
 			assertThatThrownBy(() -> noticeService.deleteNotice(1L))
+				.isInstanceOf(EntityNotFoundException.class)
+				.hasMessage(ErrorCode.NOTICE_NOT_FOUND.getMessage());
+		}
+	}
+
+	@Nested
+	class GetNotice {
+		@Test
+		void 공지사항을_조회한다() {
+			// given
+			Notice notice = Notice.builder()
+				.title("title")
+				.content("content")
+				.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+				.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+				.writer("writer")
+				.build();
+			ReflectionTestUtils.setField(notice, "id", 1L);
+
+			File file1 = new File(1L, "file1", ".png");
+			File file2 = new File(1L, "file2", ".png");
+			List<File> files = Arrays.asList(file1, file2);
+
+			given(noticeRepository.findById(anyLong())).willReturn(java.util.Optional.of(notice));
+			given(fileRepository.findAllByNoticeId(anyLong())).willReturn(files);
+
+			// when
+			NoticeResponse result = noticeService.getNotice(1L);
+
+			// then
+			assertThat(result.notice()).usingRecursiveComparison().isEqualTo(NoticeInfo.from(notice));
+			assertThat(result.files()).hasSize(2);
+			assertThat(result.files().get(0).originalName()).isEqualTo(file1.getOriginalName());
+			assertThat(result.files().get(0).fileUrl()).isEqualTo(file1.getFileName());
+			assertThat(result.files().get(1).originalName()).isEqualTo(file2.getOriginalName());
+			assertThat(result.files().get(1).fileUrl()).isEqualTo(file2.getFileName());
+		}
+
+		@Test
+		void 공지사항이_없는_경우_예외를_발생시킨다() {
+			// given
+			given(noticeRepository.findById(anyLong())).willReturn(Optional.empty());
+
+			// when, then
+			assertThatThrownBy(() -> noticeService.getNotice(1L))
 				.isInstanceOf(EntityNotFoundException.class)
 				.hasMessage(ErrorCode.NOTICE_NOT_FOUND.getMessage());
 		}

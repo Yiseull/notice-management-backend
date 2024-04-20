@@ -163,4 +163,30 @@ class NoticeControllerTest {
 		resultActions
 			.andExpect(status().isOk());
 	}
+
+	@Test
+	void getNotice() throws Exception {
+		// given
+		final Notice notice = Notice.builder()
+			.title("제목")
+			.content("내용")
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
+			.writer("작성자")
+			.build();
+		noticeSetUp.save(notice);
+
+		// when
+		ResultActions resultActions = mockMvc.perform(get("/api/notices/1"));
+
+		// then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
+			.andExpect(jsonPath("notice.noticeId").value(1L))
+			.andExpect(jsonPath("notice.title").value("제목"))
+			.andExpect(jsonPath("notice.content").value("내용"))
+			.andExpect(jsonPath("notice.writer").value("작성자"))
+			.andExpect(jsonPath("notice.views").value(1));
+	}
 }
