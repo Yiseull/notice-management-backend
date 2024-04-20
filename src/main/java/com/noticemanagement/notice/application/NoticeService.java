@@ -14,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.noticemanagement.global.error.exception.EntityNotFoundException;
 import com.noticemanagement.global.error.exception.ErrorCode;
+import com.noticemanagement.notice.api.dto.response.FileInfo;
+import com.noticemanagement.notice.api.dto.response.NoticeInfo;
+import com.noticemanagement.notice.api.dto.response.NoticeResponse;
 import com.noticemanagement.notice.dao.FileRepository;
 import com.noticemanagement.notice.dao.NoticeRepository;
 import com.noticemanagement.notice.domain.File;
@@ -73,6 +76,15 @@ public class NoticeService {
 		files.forEach(file -> new java.io.File(file.getFileName()).delete());
 		noticeRepository.delete(notice);
 		fileRepository.deleteAll(files);
+	}
+
+	@Transactional
+	public NoticeResponse getNotice(final Long noticeId) {
+		final Notice notice = noticeRepository.findById(noticeId)
+			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOTICE_NOT_FOUND));
+		notice.increaseViews();
+		final List<File> files = fileRepository.findAllByNoticeId(noticeId);
+		return new NoticeResponse(NoticeInfo.from(notice), FileInfo.listOf(files));
 	}
 
 	private void renameFiles(final List<MultipartFile> multipartFiles, final List<File> files) {

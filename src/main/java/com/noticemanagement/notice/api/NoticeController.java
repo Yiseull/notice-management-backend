@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.noticemanagement.notice.api.dto.request.NoticeCreateRequest;
 import com.noticemanagement.notice.api.dto.request.NoticeModifyRequest;
 import com.noticemanagement.notice.api.dto.response.NoticeCreateResponse;
+import com.noticemanagement.notice.api.dto.response.NoticeResponse;
 import com.noticemanagement.notice.application.NoticeService;
 
 import lombok.RequiredArgsConstructor;
@@ -49,5 +51,10 @@ public class NoticeController {
 	public ResponseEntity<Void> deleteNotice(@PathVariable final Long noticeId) {
 		noticeService.deleteNotice(noticeId);
 		return ResponseEntity.ok().build();
+	}
+
+	@GetMapping("/{noticeId}")
+	public ResponseEntity<NoticeResponse> getNotice(@PathVariable final Long noticeId) {
+		return ResponseEntity.ok(noticeService.getNotice(noticeId));
 	}
 }

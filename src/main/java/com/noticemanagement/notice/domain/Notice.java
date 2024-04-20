@@ -64,4 +64,8 @@ public class Notice extends BaseEntity {
 		this.title = new Title(title);
 		this.content = content;
 	}
+
+	public void increaseViews() {
+		this.views++;
+	}
 }
