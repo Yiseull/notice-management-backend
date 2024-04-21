@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.noticemanagement.notice.api.dto.request.NoticeCreateRequest;
 import com.noticemanagement.notice.api.dto.request.NoticeModifyRequest;
 import com.noticemanagement.notice.domain.Notice;
+import com.noticemanagement.notice.fixtures.builder.NoticeBuilder;
 import com.noticemanagement.notice.fixtures.setup.NoticeSetUp;
 
 @SpringBootTest
@@ -103,14 +104,7 @@ class NoticeControllerTest {
 
 		@BeforeEach
 		void setUp() throws JsonProcessingException {
-			final Notice notice = Notice.builder()
-				.title("제목")
-				.content("내용")
-				.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
-				.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
-				.writer("작성자")
-				.build();
-			noticeSetUp.save(notice);
+			noticeSetUp.save(NoticeBuilder.build());
 
 			NoticeModifyRequest request = new NoticeModifyRequest("제목2", "내용2");
 			json = new MockMultipartFile("request", "", "application/json",
@@ -147,14 +141,7 @@ class NoticeControllerTest {
 	@Test
 	void 공지사항을_삭제한다() throws Exception {
 		// given
-		final Notice notice = Notice.builder()
-			.title("제목")
-			.content("내용")
-			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
-			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
-			.writer("작성자")
-			.build();
-		noticeSetUp.save(notice);
+		noticeSetUp.save(NoticeBuilder.build());
 
 		// when
 		ResultActions resultActions = mockMvc.perform(delete("/api/notices/1"));
@@ -167,14 +154,7 @@ class NoticeControllerTest {
 	@Test
 	void 공지사항을_조회한다() throws Exception {
 		// given
-		final Notice notice = Notice.builder()
-			.title("제목")
-			.content("내용")
-			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
-			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
-			.writer("작성자")
-			.build();
-		noticeSetUp.save(notice);
+		Notice notice = noticeSetUp.save(NoticeBuilder.build());
 
 		// when
 		ResultActions resultActions = mockMvc.perform(get("/api/notices/1"));
@@ -184,31 +164,17 @@ class NoticeControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("notice.noticeId").value(1L))
-			.andExpect(jsonPath("notice.title").value("제목"))
-			.andExpect(jsonPath("notice.content").value("내용"))
-			.andExpect(jsonPath("notice.writer").value("작성자"))
+			.andExpect(jsonPath("notice.title").value(notice.getTitle().getTitle()))
+			.andExpect(jsonPath("notice.content").value(notice.getContent()))
+			.andExpect(jsonPath("notice.writer").value(notice.getWriter()))
 			.andExpect(jsonPath("notice.views").value(1));
 	}
 
 	@Test
 	void 공지사항을_모두_조회한다() throws Exception {
 		// given
-		final Notice notice1 = Notice.builder()
-			.title("제목1")
-			.content("내용1")
-			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
-			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
-			.writer("작성자1")
-			.build();
-		final Notice notice2 = Notice.builder()
-			.title("제목2")
-			.content("내용2")
-			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
-			.endTime(LocalDateTime.of(2024, 4, 20, 13, 45))
-			.writer("작성자2")
-			.build();
-		noticeSetUp.save(notice1);
-		noticeSetUp.save(notice2);
+		Notice notice1 = noticeSetUp.save(NoticeBuilder.build("제목1", "내용1", "작성자1"));
+		Notice notice2 = noticeSetUp.save(NoticeBuilder.build("제목2", "내용2", "작성자2"));
 
 		// when
 		ResultActions resultActions = mockMvc.perform(get("/api/notices"));
@@ -218,14 +184,14 @@ class NoticeControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
 			.andExpect(jsonPath("notices[0].noticeId").value(1L))
-			.andExpect(jsonPath("notices[0].title").value("제목1"))
-			.andExpect(jsonPath("notices[0].content").value("내용1"))
-			.andExpect(jsonPath("notices[0].writer").value("작성자1"))
+			.andExpect(jsonPath("notices[0].title").value(notice1.getTitle().getTitle()))
+			.andExpect(jsonPath("notices[0].content").value(notice1.getContent()))
+			.andExpect(jsonPath("notices[0].writer").value(notice1.getWriter()))
 			.andExpect(jsonPath("notices[0].views").value(0))
 			.andExpect(jsonPath("notices[1].noticeId").value(2L))
-			.andExpect(jsonPath("notices[1].title").value("제목2"))
-			.andExpect(jsonPath("notices[1].content").value("내용2"))
-			.andExpect(jsonPath("notices[1].writer").value("작성자2"))
+			.andExpect(jsonPath("notices[1].title").value(notice2.getTitle().getTitle()))
+			.andExpect(jsonPath("notices[1].content").value(notice2.getContent()))
+			.andExpect(jsonPath("notices[1].writer").value(notice2.getWriter()))
 			.andExpect(jsonPath("notices[1].views").value(0));
 	}
 }

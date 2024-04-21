@@ -17,6 +17,16 @@ public class NoticeBuilder {
 			.build();
 	}
 
+	public static Notice build(final String title, final String content, final String writer) {
+		return Notice.builder()
+			.title(title)
+			.content(content)
+			.startTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.endTime(LocalDateTime.of(2024, 4, 19, 13, 45))
+			.writer(writer)
+			.build();
+	}
+
 	public static Notice build(final Long noticeId) {
 		Notice notice = Notice.builder()
 			.title("title")
