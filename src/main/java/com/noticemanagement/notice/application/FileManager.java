@@ -52,7 +52,13 @@ public class FileManager {
 
 	public void deleteAllByNoticeId(final Long noticeId) {
 		final List<File> files = readAllByNoticeId(noticeId);
-		files.forEach(file -> new java.io.File(file.getFileName()).delete());
+		files.forEach(file -> {
+			try {
+				Files.delete(Paths.get(uploadDir, file.getFileName()));
+			} catch (IOException e) {
+				throw new RuntimeException("파일 삭제에 실패했습니다.", e);
+			}
+		});;
 		fileRepository.deleteAll(files);
 	}
 
