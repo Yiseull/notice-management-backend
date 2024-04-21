@@ -3,6 +3,7 @@ package com.noticemanagement.notice.application;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.noticemanagement.notice.api.dto.response.FileInfo;
@@ -42,6 +43,7 @@ public class NoticeService {
 		noticeRemover.remove(noticeId);
 	}
 
+	@Transactional
 	public NoticeResponse getNotice(final Long noticeId) {
 		final Notice notice = noticeReader.read(noticeId);
 		notice.increaseViews();
