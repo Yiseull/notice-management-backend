@@ -58,7 +58,7 @@ public class FileManager {
 			} catch (IOException e) {
 				throw new RuntimeException("파일 삭제에 실패했습니다.", e);
 			}
-		});;
+		});
 		fileRepository.deleteAll(files);
 	}
 
