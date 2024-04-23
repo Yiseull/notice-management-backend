@@ -17,6 +17,9 @@ import com.noticemanagement.notice.domain.File;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 파일을 관리하는 기능을 담당하는 클래스입니다.
+ */
 @Component
 @RequiredArgsConstructor
 public class FileManager {

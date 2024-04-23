@@ -8,6 +8,9 @@ import com.noticemanagement.notice.domain.Notice;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * 공지사항을 삭제하는 기능을 담당하는 클래스입니다.
+ */
 @Component
 @RequiredArgsConstructor
 public class NoticeRemover {
