@@ -24,6 +24,10 @@ public class NoticeReader {
 			.orElseThrow(() -> new EntityNotFoundException(ErrorCode.NOTICE_NOT_FOUND));
 	}
 
+	public Notice readWithLock(final Long noticeId) {
+		return noticeRepository.findByIdWithPessimisticLock(noticeId);
+	}
+
 	public List<Notice> readAll() {
 		return noticeRepository.findAll();
 	}

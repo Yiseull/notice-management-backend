@@ -45,7 +45,7 @@ public class NoticeService {
 
 	@Transactional
 	public NoticeResponse getNotice(final Long noticeId) {
-		final Notice notice = noticeReader.read(noticeId);
+		final Notice notice = noticeReader.readWithLock(noticeId);
 		notice.increaseViews();
 		final List<File> files = fileManager.readAllByNoticeId(noticeId);
 		return new NoticeResponse(NoticeInfo.from(notice), FileInfo.listOf(files));
